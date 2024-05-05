@@ -1,0 +1,6 @@
+#spring.application.name=firstSpringBoot
+
+spring:
+ application:
+    name: firstSpringBoot
+
