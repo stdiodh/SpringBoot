@@ -1,52 +1,74 @@
 package com.example.firstSpringBoot.human.controller
 
-import com.example.firstSpringBoot.human.model.Human
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import com.example.firstSpringBoot.human.entity.Human
+import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
 
-@RestController()
-@RequestMapping("/human")
-class HumanControllers {
-    var humans = mutableListOf (
-        Human(name = "짱구", age = 5,id = 1),
-        Human(name = "맹구", age = 5,id = 2),
-        Human(name = "철수", age = 5,id = 3),
-        Human(name = "유리", age = 5,id = 4),
-    )
+@RestController
+@RequestMapping("/humans")
+
+class HumanController {
+    final var humans = mutableListOf<Human>()
+
+    init {
+        humans.addAll(
+            listOf(
+                Human(name = "짱구", age = 5, id = 1),
+                Human(name = "맹구", age = 5, id = 2),
+                Human(name = "철수", age = 5, id = 3),
+                Human(name = "유리", age = 5, id = 4),
+            )
+        )
+    }
 
     @GetMapping
-    fun getHumansList() : List<Human> {
-        return humans
+    private fun getHumanList(): ResponseEntity<List<Human>> {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(humans)
+    }
+
+    @GetMapping("/{id}")
+    private fun getHumanById(@PathVariable id: String): ResponseEntity<Any> {
+        for (h in humans) {
+            if (h.id == id.toLong()) {
+                return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(h)
+            }
+        }
+        return ResponseEntity
+            .status(HttpStatus.NO_CONTENT)
+            .build()
     }
 
     @PostMapping
-    fun postHuman(@RequestBody human : Human) : Human {
+    fun postHuman(@RequestBody human: Human): ResponseEntity<Human> {
         humans.add(human)
-        return human
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(human)
     }
 
-    @PutMapping("/{id}")
-    fun putHuman(@RequestBody human : Human, @PathVariable id : Int)
-    : Human{
-        for (h : Human in humans){
-            if (h.id == id){
-                var index = humans.indexOf(h)
+    @PutMapping
+    fun putHuman(@PathVariable id: String, @RequestBody human: Human): ResponseEntity<Human> {
+        var index: Int = -1
+        for (h in humans) {
+            if (h.id == id.toLong()) {
+                index = humans.indexOf(h)
                 humans[index] = human
-                return human
             }
         }
-        humans.add(human)
-        return human
+
+        return if (index != -1) ResponseEntity.status(HttpStatus.OK).body(human) else postHuman(human)
     }
 
     @DeleteMapping("/{id}")
-    fun deleteHuman(@PathVariable id: String) : Unit{
-        humans.removeIf { h : Human -> h.id.toString() == id }
+    fun deleteHuman(@PathVariable id : String) : ResponseEntity<Any> {
+        humans.removeIf{ it.id == id.toLong() }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 }
+
