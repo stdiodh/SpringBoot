@@ -69,6 +69,7 @@ class HumanController {
     fun deleteHuman(@PathVariable id : String) : ResponseEntity<Any> {
         humans.removeIf{ it.id == id.toLong() }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+
     }
 }
 
