@@ -52,7 +52,7 @@ class HumanController {
             .body(human)
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     fun putHuman(@PathVariable id: String, @RequestBody human: Human): ResponseEntity<Human> {
         var index: Int = -1
         for (h in humans) {
