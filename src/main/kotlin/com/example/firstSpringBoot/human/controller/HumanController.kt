@@ -2,13 +2,11 @@ package com.example.firstSpringBoot.human.controller
 
 import com.example.firstSpringBoot.human.entity.Human
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/humans")
-
 class HumanController {
     final var humans = mutableListOf<Human>()
 
@@ -22,6 +20,7 @@ class HumanController {
             )
         )
     }
+
 
     @GetMapping
     private fun getHumanList(): ResponseEntity<List<Human>> {
